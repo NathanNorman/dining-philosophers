@@ -1,5 +1,7 @@
 # Dining Philosophers Problem - Interactive Simulation
 
+**[🔗 Live Demo](https://nathannorman.github.io/dining-philosophers/index-minimal.html)**
+
 An interactive visualization of the classic Dining Philosophers Problem, inspired by the discussion from Pantheon Season 1, Episode 1.
 
 ## About the Problem
