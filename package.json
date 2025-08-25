@@ -1,0 +1,24 @@
+{
+  "name": "dining-philosophers",
+  "version": "1.0.0",
+  "description": "An interactive visualization of the classic Dining Philosophers Problem, inspired by the discussion from Pantheon Season 1, Episode 1.",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NathanNorman/dining-philosophers.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/NathanNorman/dining-philosophers/issues"
+  },
+  "homepage": "https://github.com/NathanNorman/dining-philosophers#readme",
+  "dependencies": {
+    "playwright": "^1.55.0"
+  }
+}

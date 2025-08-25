@@ -193,9 +193,16 @@ input[type="range"] {
 
 .waiter {
     position: absolute;
-    top: -60px;
-    font-size: 3rem;
+    top: -80px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 4rem;
     animation: waiterFloat 3s infinite ease-in-out;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    padding: 10px;
+    box-shadow: 0 0 20px rgba(255,255,255,0.3);
+    border: 3px solid rgba(255,255,255,0.5);
 }
 
 .waiter.hidden {
@@ -203,7 +210,26 @@ input[type="range"] {
 }
 
 .waiter.active {
-    animation: waiterApproval 0.5s;
+    animation: waiterApproval 0.8s;
+    background: rgba(76, 175, 80, 0.3);
+    box-shadow: 0 0 30px rgba(76, 175, 80, 0.6);
+}
+
+.waiter::after {
+    content: "WAITER\ACONTROLLING\AACCESS";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.3rem;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    white-space: pre;
+    background: rgba(0,0,0,0.7);
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-top: 10px;
 }
 
 .stats {

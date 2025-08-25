@@ -282,7 +282,7 @@ class DiningPhilosophers {
                 // Grant permission
                 this.waiter.permissions.add(philosopher.id);
                 this.waiterElement.classList.add('active');
-                setTimeout(() => this.waiterElement.classList.remove('active'), 500);
+                setTimeout(() => this.waiterElement.classList.remove('active'), 800);
                 break;
             }
             await this.sleep(100);
@@ -292,6 +292,9 @@ class DiningPhilosophers {
             // Now can safely pick up chopsticks
             const leftChopstick = this.chopsticks[philosopher.leftChopstick];
             const rightChopstick = this.chopsticks[philosopher.rightChopstick];
+            
+            // Wait a moment to show the permission was granted
+            await this.sleep(200);
             
             leftChopstick.taken = true;
             leftChopstick.takenBy = philosopher.id;
