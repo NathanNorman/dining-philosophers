@@ -1,5 +1,4 @@
 node_modules/
 .claude-work/
-*.png
 package-lock.json
 .DS_Store

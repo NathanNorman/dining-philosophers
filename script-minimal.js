@@ -176,6 +176,32 @@ class MinimalRenderer {
         this.centerX = canvas.width / 2;
         this.centerY = canvas.height / 2;
         this.tableRadius = 120;
+        
+        // Load philosopher portraits
+        this.philosopherImages = [];
+        this.loadPhilosopherImages();
+    }
+    
+    loadPhilosopherImages() {
+        const philosopherNames = [
+            'socrates',
+            'plato', 
+            'aristotle',
+            'nietzsche',
+            'descartes'
+        ];
+        
+        philosopherNames.forEach((name, i) => {
+            const img = new Image();
+            img.src = `${name}-rounded.png`;
+            img.onload = () => {
+                this.philosopherImages[i] = img;
+                // Redraw when image loads
+                if (window.simulationController) {
+                    window.simulationController.render();
+                }
+            };
+        });
     }
     
     clear() {
@@ -266,9 +292,9 @@ class MinimalRenderer {
             const x = this.centerX + this.tableRadius * Math.cos(angle);
             const y = this.centerY + this.tableRadius * Math.sin(angle);
             
-            // Draw philosopher circle
+            // Draw state background circle
             this.ctx.beginPath();
-            this.ctx.arc(x, y, 25, 0, Math.PI * 2);
+            this.ctx.arc(x, y, 30, 0, Math.PI * 2);
             
             // Color based on state
             switch(phil.state) {
@@ -291,15 +317,38 @@ class MinimalRenderer {
             this.ctx.lineWidth = 2;
             this.ctx.stroke();
             
-            // Draw philosopher number
+            // Draw philosopher portrait if available
+            if (this.philosopherImages[i]) {
+                this.ctx.save();
+                // Draw the portrait centered
+                const imgSize = 50;
+                this.ctx.drawImage(
+                    this.philosopherImages[i],
+                    x - imgSize/2,
+                    y - imgSize/2,
+                    imgSize,
+                    imgSize
+                );
+                this.ctx.restore();
+            } else {
+                // Fallback to text if image not loaded
+                this.ctx.fillStyle = '#333';
+                this.ctx.font = 'bold 14px sans-serif';
+                this.ctx.textAlign = 'center';
+                this.ctx.textBaseline = 'middle';
+                this.ctx.fillText(`P${i + 1}`, x, y);
+            }
+            
+            // Draw philosopher name
             this.ctx.fillStyle = '#333';
-            this.ctx.font = 'bold 14px sans-serif';
+            this.ctx.font = '10px sans-serif';
             this.ctx.textAlign = 'center';
-            this.ctx.textBaseline = 'middle';
-            this.ctx.fillText(`P${i + 1}`, x, y);
+            this.ctx.textBaseline = 'top';
+            const names = ['Socrates', 'Plato', 'Aristotle', 'Nietzsche', 'Descartes'];
+            this.ctx.fillText(names[i] || `P${i + 1}`, x, y + 35);
             
             // Draw state icon
-            this.ctx.font = '10px sans-serif';
+            this.ctx.font = '12px sans-serif';
             let icon = '';
             switch(phil.state) {
                 case 'thinking': icon = '💭'; break;
@@ -307,7 +356,7 @@ class MinimalRenderer {
                 case 'eating': icon = '🍜'; break;
                 case 'blocked': icon = '🔒'; break;
             }
-            this.ctx.fillText(icon, x, y + 15);
+            this.ctx.fillText(icon, x, y - 40);
         });
     }
     
@@ -864,7 +913,7 @@ class SimulationController {
 // Initialize when DOM is ready
 if (typeof document !== 'undefined') {
     document.addEventListener('DOMContentLoaded', () => {
-        new SimulationController();
+        window.simulationController = new SimulationController();
     });
 }
 
