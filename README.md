@@ -44,6 +44,18 @@ Simply open `index.html` in a web browser. No additional setup required!
 
 This project was inspired by the dining philosophers discussion in Pantheon Season 1, Episode 1, where the protagonist Caspian explains the waiter solution as a practical approach to preventing deadlock in concurrent systems.
 
+## Running Tests
+
+The project includes a comprehensive test suite to ensure synchronization correctness:
+
+```bash
+# Run automated tests via Node.js
+node run-tests.js
+
+# Or open in browser for visual test runner
+open test-runner.html
+```
+
 ## Development
 
-Just vibe coded this with Claude Code for fun! 🎯
+Built with Claude Code, focusing on educational clarity and preventing synchronization bugs through comprehensive testing.

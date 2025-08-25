@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dining Philosophers - Educational Visualization</title>
+    <link rel="stylesheet" href="style-minimal.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Dining Philosophers Problem</h1>
+            <p class="subtitle">Understanding Deadlock and Synchronization</p>
+        </header>
+
+        <div class="mode-selector">
+            <label>
+                <input type="radio" name="mode" value="classic" checked>
+                Classic (Deadlock-prone)
+            </label>
+            <label>
+                <input type="radio" name="mode" value="waiter">
+                Waiter (Mutex-controlled)
+            </label>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <button id="stepBackBtn" class="btn">← Step Back</button>
+                <button id="playPauseBtn" class="btn btn-primary">▶ Play</button>
+                <button id="stepForwardBtn" class="btn">Step Forward →</button>
+                <button id="resetBtn" class="btn">Reset</button>
+            </div>
+            
+            <div class="control-group">
+                <label for="speedSlider">Speed:</label>
+                <input type="range" id="speedSlider" min="0.1" max="2" step="0.1" value="1">
+                <span id="speedValue">1x</span>
+            </div>
+
+            <div class="control-group">
+                <label for="scenarioSelect">Scenario:</label>
+                <select id="scenarioSelect">
+                    <option value="default">Default</option>
+                    <option value="perfect-storm">Perfect Storm</option>
+                    <option value="cascade">Cascade Failure</option>
+                    <option value="near-miss">Near Miss</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="visualization-container">
+            <div class="main-view">
+                <canvas id="mainCanvas" width="600" height="400"></canvas>
+                
+                <div id="waiterQueue" class="waiter-queue hidden">
+                    <h3>Permission Queue</h3>
+                    <div id="queueList"></div>
+                    <div id="currentlyEating">Currently Eating: <span id="eatingList">None</span></div>
+                </div>
+            </div>
+
+            <div class="info-panel">
+                <div class="event-log">
+                    <h3>Event Log</h3>
+                    <div id="eventLogContent"></div>
+                </div>
+                
+                <div class="state-info">
+                    <h3>Current State</h3>
+                    <div id="stateDetails">
+                        <div>Step: <span id="stepCounter">0</span></div>
+                        <div id="deadlockWarning" class="warning hidden">
+                            ⚠️ Deadlock Detected!
+                        </div>
+                    </div>
+                </div>
+
+                <div class="help-text">
+                    <h3>Instructions</h3>
+                    <ul>
+                        <li>Click a philosopher to make them hungry</li>
+                        <li>Click a chopstick to see who can reach it</li>
+                        <li>Use step controls to analyze sequences</li>
+                        <li>Try different scenarios to understand patterns</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script-minimal.js"></script>
+</body>
+</html>

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dining Philosophers - Test Suite</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        
+        .test-controls {
+            margin: 20px 0;
+        }
+        
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        button:hover {
+            background: #0056b3;
+        }
+        
+        #test-results {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 20px;
+            margin-top: 20px;
+            min-height: 200px;
+        }
+        
+        .test-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+        }
+        
+        .test-item:last-child {
+            border-bottom: none;
+        }
+        
+        .test-passed {
+            color: #28a745;
+        }
+        
+        .test-failed {
+            color: #dc3545;
+        }
+        
+        .test-error {
+            color: #666;
+            font-size: 12px;
+            margin-left: 20px;
+            margin-top: 4px;
+        }
+        
+        .summary {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        .summary.all-passed {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .summary.some-failed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Dining Philosophers Test Suite</h1>
+    
+    <div class="info">
+        These tests ensure the synchronization between internal state and visual representation is correct,
+        preventing bugs like chopsticks appearing to be held by multiple philosophers.
+    </div>
+    
+    <div class="test-controls">
+        <button id="runTestsBtn">Run All Tests</button>
+        <button id="clearBtn">Clear Results</button>
+    </div>
+    
+    <div id="test-results">
+        <p>Click "Run All Tests" to start the test suite.</p>
+    </div>
+    
+    <!-- Load the main simulation code first -->
+    <script src="script-minimal.js"></script>
+    
+    <!-- Then load and run the tests -->
+    <script>
+        // Test suite implementation
+        class DiningPhilosophersTests {
+            constructor() {
+                this.results = [];
+                this.passed = 0;
+                this.failed = 0;
+            }
+            
+            createTestState(philosopherCount = 5) {
+                return new SimulationState(philosopherCount);
+            }
+            
+            assert(condition, message) {
+                if (!condition) {
+                    throw new Error(`Assertion failed: ${message}`);
+                }
+            }
+            
+            testChopstickOwnership() {
+                const state = this.createTestState();
+                const phil0 = state.philosophers[0];
+                const chop0 = state.chopsticks[0];
+                
+                phil0.requestChopstick(chop0);
+                this.assert(chop0.isHeld === true, "Chopstick should be marked as held");
+                this.assert(chop0.holder === 0, "Chopstick holder should be philosopher 0");
+                this.assert(phil0.heldChopsticks.has(0), "Philosopher should track held chopstick");
+                
+                const phil1 = state.philosophers[1];
+                const result = phil1.requestChopstick(chop0);
+                this.assert(result === false, "Should not be able to take held chopstick");
+                this.assert(chop0.holder === 0, "Original holder should remain");
+                
+                phil0.releaseChopstick(chop0);
+                this.assert(chop0.isHeld === false, "Chopstick should be free");
+                this.assert(chop0.holder === null, "Chopstick should have no holder");
+                
+                return "PASSED";
+            }
+            
+            testEatingRequiresBothChopsticks() {
+                const state = this.createTestState();
+                const phil2 = state.philosophers[2];
+                const leftChop = state.chopsticks[2];  // P3's left is C3
+                const rightChop = state.chopsticks[1];  // P3's right is C2
+                
+                phil2.requestChopstick(leftChop);
+                this.assert(phil2.heldChopsticks.size === 1, "Should only have one chopstick");
+                
+                phil2.requestChopstick(rightChop);
+                this.assert(phil2.heldChopsticks.size === 2, "Should have both chopsticks");
+                this.assert(leftChop.holder === 2, "Left chopstick should show philosopher 2 as owner");
+                this.assert(rightChop.holder === 2, "Right chopstick should show philosopher 2 as owner");
+                
+                return "PASSED";
+            }
+            
+            testVisualStateConsistency() {
+                const state = this.createTestState();
+                
+                state.philosophers[3].state = 'eating';
+                state.philosophers[3].requestChopstick(state.chopsticks[3]);  // P4's left is C4
+                state.philosophers[3].requestChopstick(state.chopsticks[2]);  // P4's right is C3
+                
+                this.assert(state.chopsticks[3].holder === 3, "C4 should be held by P4");
+                this.assert(state.chopsticks[2].holder === 3, "C3 should be held by P4");
+                
+                for (let i = 0; i < state.philosopherCount; i++) {
+                    if (i !== 3) {
+                        this.assert(!state.philosophers[i].heldChopsticks.has(3), 
+                            `P${i+1} should not think they have C4`);
+                        this.assert(!state.philosophers[i].heldChopsticks.has(2), 
+                            `P${i+1} should not think they have C3`);
+                    }
+                }
+                
+                return "PASSED";
+            }
+            
+            testDeadlockDetection() {
+                const state = this.createTestState();
+                
+                for (let i = 0; i < state.philosopherCount; i++) {
+                    const phil = state.philosophers[i];
+                    const leftChop = state.chopsticks[i];
+                    
+                    phil.state = 'blocked';
+                    phil.requestChopstick(leftChop);
+                    phil.waitingFor = (i + 1) % state.philosopherCount;
+                }
+                
+                const hasDeadlock = state.checkForDeadlock();
+                this.assert(hasDeadlock === true, "Should detect circular wait deadlock");
+                
+                return "PASSED";
+            }
+            
+            testSnapshotRestore() {
+                const state = this.createTestState();
+                
+                state.philosophers[1].state = 'eating';
+                state.philosophers[1].requestChopstick(state.chopsticks[1]);  // P2's left is C2
+                state.philosophers[1].requestChopstick(state.chopsticks[0]);  // P2's right is C1
+                state.stepNumber = 10;
+                
+                const snapshot = state.snapshot();
+                
+                state.philosophers[1].releaseAllChopsticks(state.chopsticks);
+                state.philosophers[1].state = 'thinking';
+                state.stepNumber = 20;
+                
+                state.restore(snapshot);
+                
+                this.assert(state.philosophers[1].state === 'eating', "State should be restored");
+                this.assert(state.stepNumber === 10, "Step number should be restored");
+                
+                return "PASSED";
+            }
+            
+            testNoDoubleHolding() {
+                const state = this.createTestState();
+                
+                state.philosophers[0].requestChopstick(state.chopsticks[0]);
+                const result = state.philosophers[4].requestChopstick(state.chopsticks[0]);
+                
+                this.assert(result === false, "Should not be able to take held chopstick");
+                this.assert(state.chopsticks[0].holder === 0, "Chopstick should still belong to Phil 0");
+                
+                return "PASSED";
+            }
+            
+            testWaiterConcurrencyLimit() {
+                const state = this.createTestState();
+                state.mode = 'waiter';
+                
+                const maxConcurrent = state.waiter.maxConcurrent;
+                
+                for (let i = 0; i < maxConcurrent; i++) {
+                    state.waiter.currentlyEating.add(i);
+                }
+                
+                this.assert(state.waiter.currentlyEating.size === maxConcurrent, 
+                    "Should be at max concurrent eaters");
+                
+                const canAddMore = state.waiter.currentlyEating.size < state.waiter.maxConcurrent;
+                this.assert(!canAddMore, "Should not be able to add more concurrent eaters");
+                
+                return "PASSED";
+            }
+            
+            runAll() {
+                const tests = [
+                    { name: "Chopstick Ownership Consistency", fn: () => this.testChopstickOwnership() },
+                    { name: "Eating Requires Both Chopsticks", fn: () => this.testEatingRequiresBothChopsticks() },
+                    { name: "Visual State Consistency", fn: () => this.testVisualStateConsistency() },
+                    { name: "Deadlock Detection", fn: () => this.testDeadlockDetection() },
+                    { name: "Snapshot and Restore", fn: () => this.testSnapshotRestore() },
+                    { name: "No Double-Holding", fn: () => this.testNoDoubleHolding() },
+                    { name: "Waiter Concurrency Limit", fn: () => this.testWaiterConcurrencyLimit() }
+                ];
+                
+                this.results = [];
+                this.passed = 0;
+                this.failed = 0;
+                
+                tests.forEach(test => {
+                    try {
+                        const result = test.fn();
+                        this.passed++;
+                        this.results.push({ name: test.name, status: 'PASSED' });
+                    } catch (error) {
+                        this.failed++;
+                        this.results.push({ name: test.name, status: 'FAILED', error: error.message });
+                    }
+                });
+                
+                return this.results;
+            }
+        }
+        
+        // UI handlers
+        document.getElementById('runTestsBtn').addEventListener('click', () => {
+            const resultsDiv = document.getElementById('test-results');
+            resultsDiv.innerHTML = '<p>Running tests...</p>';
+            
+            // Run tests after a brief delay to show loading message
+            setTimeout(() => {
+                const tester = new DiningPhilosophersTests();
+                const results = tester.runAll();
+                
+                resultsDiv.innerHTML = '';
+                
+                results.forEach(result => {
+                    const testDiv = document.createElement('div');
+                    testDiv.className = `test-item ${result.status === 'PASSED' ? 'test-passed' : 'test-failed'}`;
+                    testDiv.innerHTML = `${result.status === 'PASSED' ? '✅' : '❌'} ${result.name}`;
+                    
+                    if (result.error) {
+                        const errorDiv = document.createElement('div');
+                        errorDiv.className = 'test-error';
+                        errorDiv.textContent = result.error;
+                        testDiv.appendChild(errorDiv);
+                    }
+                    
+                    resultsDiv.appendChild(testDiv);
+                });
+                
+                // Add summary
+                const summaryDiv = document.createElement('div');
+                summaryDiv.className = `summary ${tester.failed === 0 ? 'all-passed' : 'some-failed'}`;
+                summaryDiv.innerHTML = `
+                    Test Results: ${tester.passed}/${results.length} passed
+                    ${tester.failed > 0 ? '<br>⚠️ Fix failed tests before deploying!' : '<br>✅ All tests passed!'}
+                `;
+                resultsDiv.appendChild(summaryDiv);
+            }, 100);
+        });
+        
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            document.getElementById('test-results').innerHTML = '<p>Click "Run All Tests" to start the test suite.</p>';
+        });
+    </script>
+</body>
+</html>

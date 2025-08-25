@@ -1,4 +1,5 @@
 # Dining Philosophers Visualization: Redesign Proposal
+WORKING_DIRECTORY: .claude-work/impl-20250825-000800-19901
 
 ## Executive Summary
 
