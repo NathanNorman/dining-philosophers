@@ -1,0 +1,298 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: white;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+header p {
+    opacity: 0.8;
+    font-size: 1.1rem;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    background: rgba(255,255,255,0.1);
+    padding: 20px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+}
+
+.solution-selector {
+    display: flex;
+    gap: 20px;
+}
+
+.solution-selector label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+}
+
+.solution-selector label:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+.control-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+button {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+#pauseBtn {
+    background: #FF9800;
+}
+
+#resetBtn {
+    background: #f44336;
+}
+
+.parameters {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.parameters label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+input[type="range"] {
+    width: 100px;
+}
+
+.simulation-container {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+#table-container {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#table {
+    width: 300px;
+    height: 300px;
+    border: 8px solid #8B4513;
+    border-radius: 50%;
+    background: radial-gradient(circle, #DEB887, #CD853F);
+    position: relative;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+}
+
+.philosopher {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    transition: all 0.3s ease;
+    border: 3px solid;
+    cursor: pointer;
+}
+
+.philosopher.thinking {
+    background: #4CAF50;
+    border-color: #2E7D32;
+    animation: thinking 2s infinite;
+}
+
+.philosopher.hungry {
+    background: #FF9800;
+    border-color: #E65100;
+    animation: hungry 1s infinite;
+}
+
+.philosopher.eating {
+    background: #2196F3;
+    border-color: #0277BD;
+    animation: eating 1.5s infinite;
+}
+
+.philosopher.waiting {
+    background: #9C27B0;
+    border-color: #6A1B9A;
+    animation: waiting 0.5s infinite;
+}
+
+.chopstick {
+    position: absolute;
+    width: 4px;
+    height: 40px;
+    background: #8B4513;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    transform-origin: center bottom;
+}
+
+.chopstick.taken {
+    background: #FF5722;
+    box-shadow: 0 0 10px #FF5722;
+}
+
+.waiter {
+    position: absolute;
+    top: -60px;
+    font-size: 3rem;
+    animation: waiterFloat 3s infinite ease-in-out;
+}
+
+.waiter.hidden {
+    display: none;
+}
+
+.waiter.active {
+    animation: waiterApproval 0.5s;
+}
+
+.stats {
+    background: rgba(255,255,255,0.1);
+    padding: 20px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    min-width: 200px;
+}
+
+.stats h3 {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.stat {
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+.explanation {
+    text-align: center;
+    background: rgba(255,255,255,0.1);
+    padding: 20px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    margin: 0 auto;
+    max-width: 800px;
+}
+
+.explanation h3 {
+    margin-bottom: 15px;
+}
+
+.explanation p {
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+
+@keyframes thinking {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes hungry {
+    0%, 100% { transform: scale(1); }
+    25% { transform: scale(1.1); }
+    75% { transform: scale(0.95); }
+}
+
+@keyframes eating {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+}
+
+@keyframes waiting {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+@keyframes waiterFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes waiterApproval {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+@media (max-width: 768px) {
+    .controls {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .simulation-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    #table-container {
+        width: 300px;
+        height: 300px;
+    }
+    
+    #table {
+        width: 250px;
+        height: 250px;
+    }
+}

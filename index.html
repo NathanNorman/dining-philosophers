@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dining Philosophers Problem - Interactive Simulation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Dining Philosophers Problem</h1>
+        <p>Interactive simulation inspired by Pantheon S1E1</p>
+    </header>
+
+    <div class="controls">
+        <div class="solution-selector">
+            <label>
+                <input type="radio" name="solution" value="classic" checked>
+                Classic (Deadlock-prone)
+            </label>
+            <label>
+                <input type="radio" name="solution" value="waiter">
+                Waiter Solution (Third Party)
+            </label>
+        </div>
+        
+        <div class="control-buttons">
+            <button id="startBtn">Start Simulation</button>
+            <button id="pauseBtn">Pause</button>
+            <button id="resetBtn">Reset</button>
+        </div>
+
+        <div class="parameters">
+            <label>
+                Philosophers: <span id="philCount">5</span>
+                <input type="range" id="philSlider" min="3" max="8" value="5">
+            </label>
+            <label>
+                Speed: <span id="speedValue">1x</span>
+                <input type="range" id="speedSlider" min="0.5" max="3" step="0.1" value="1">
+            </label>
+        </div>
+    </div>
+
+    <div class="simulation-container">
+        <div id="table-container">
+            <div id="table"></div>
+            <div id="waiter" class="waiter hidden">🧑‍💼</div>
+        </div>
+        
+        <div class="stats">
+            <h3>Statistics</h3>
+            <div id="stats-content">
+                <div class="stat">Deadlocks: <span id="deadlock-count">0</span></div>
+                <div class="stat">Meals Eaten: <span id="meals-count">0</span></div>
+                <div class="stat">Waiting Time: <span id="avg-wait">0ms</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h3>About the Problem</h3>
+        <p><strong>Classic Problem:</strong> Philosophers can deadlock when all grab their left chopstick simultaneously.</p>
+        <p><strong>Waiter Solution:</strong> A third party (waiter) controls access to chopsticks, preventing deadlock by acting as a mutex.</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
