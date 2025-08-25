@@ -737,6 +737,10 @@ class SimulationController {
                 this.state.philosophers.forEach((phil, i) => {
                     phil.state = 'hungry';
                     this.state.logEvent(`P${i + 1} becomes hungry (scenario)`);
+                    // Add to waiter queue if in waiter mode
+                    if (this.state.mode === 'waiter' && !this.state.waiter.queue.includes(i)) {
+                        this.state.waiter.queue.push(i);
+                    }
                 });
                 break;
                 
@@ -746,6 +750,10 @@ class SimulationController {
                     setTimeout(() => {
                         this.state.philosophers[i].state = 'hungry';
                         this.state.logEvent(`P${i + 1} becomes hungry (cascade)`);
+                        // Add to waiter queue if in waiter mode
+                        if (this.state.mode === 'waiter' && !this.state.waiter.queue.includes(i)) {
+                            this.state.waiter.queue.push(i);
+                        }
                         this.saveHistory();
                         this.render();
                     }, i * 200);
@@ -757,6 +765,10 @@ class SimulationController {
                 for (let i = 0; i < this.state.philosopherCount - 1; i++) {
                     this.state.philosophers[i].state = 'hungry';
                     this.state.logEvent(`P${i + 1} becomes hungry (near-miss)`);
+                    // Add to waiter queue if in waiter mode
+                    if (this.state.mode === 'waiter' && !this.state.waiter.queue.includes(i)) {
+                        this.state.waiter.queue.push(i);
+                    }
                 }
                 break;
         }
