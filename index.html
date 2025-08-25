@@ -7,61 +7,133 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>Dining Philosophers Problem</h1>
-        <p>Interactive simulation inspired by Pantheon S1E1</p>
-    </header>
+    <div class="app-container">
+        <header class="header">
+            <h1 class="title">
+                <span class="title-main">Dining Philosophers</span>
+                <span class="title-sub">A Synchronization Paradox</span>
+            </h1>
+            <p class="tagline">Inspired by Pantheon S1E1 • "Introduce a third party"</p>
+        </header>
 
-    <div class="controls">
-        <div class="solution-selector">
-            <label>
-                <input type="radio" name="solution" value="classic" checked>
-                Classic (Deadlock-prone)
-            </label>
-            <label>
-                <input type="radio" name="solution" value="waiter">
-                Waiter Solution (Third Party)
-            </label>
-        </div>
-        
-        <div class="control-buttons">
-            <button id="startBtn">Start Simulation</button>
-            <button id="pauseBtn">Pause</button>
-            <button id="resetBtn">Reset</button>
-        </div>
-
-        <div class="parameters">
-            <label>
-                Philosophers: <span id="philCount">5</span>
-                <input type="range" id="philSlider" min="3" max="8" value="5">
-            </label>
-            <label>
-                Speed: <span id="speedValue">1x</span>
-                <input type="range" id="speedSlider" min="0.5" max="3" step="0.1" value="1">
-            </label>
-        </div>
-    </div>
-
-    <div class="simulation-container">
-        <div id="table-container">
-            <div id="table"></div>
-            <div id="waiter" class="waiter hidden">🧑‍💼</div>
-        </div>
-        
-        <div class="stats">
-            <h3>Statistics</h3>
-            <div id="stats-content">
-                <div class="stat">Deadlocks: <span id="deadlock-count">0</span></div>
-                <div class="stat">Meals Eaten: <span id="meals-count">0</span></div>
-                <div class="stat">Waiting Time: <span id="avg-wait">0ms</span></div>
+        <div class="mode-selector">
+            <div class="mode-card" data-mode="classic">
+                <input type="radio" name="solution" value="classic" id="classic-mode" checked>
+                <label for="classic-mode">
+                    <div class="mode-icon">⚠️</div>
+                    <h3>Classic Approach</h3>
+                    <p>Deadlock-prone chaos</p>
+                    <div class="mode-description">
+                        Each philosopher grabs chopsticks independently.
+                        Watch as they inevitably reach deadlock.
+                    </div>
+                </label>
+            </div>
+            
+            <div class="mode-card" data-mode="waiter">
+                <input type="radio" name="solution" value="waiter" id="waiter-mode">
+                <label for="waiter-mode">
+                    <div class="mode-icon">🎯</div>
+                    <h3>Waiter Solution</h3>
+                    <p>Mutex-controlled harmony</p>
+                    <div class="mode-description">
+                        A third party controls access, preventing deadlock
+                        through coordinated permission.
+                    </div>
+                </label>
             </div>
         </div>
-    </div>
 
-    <div class="explanation">
-        <h3>About the Problem</h3>
-        <p><strong>Classic Problem:</strong> Philosophers can deadlock when all grab their left chopstick simultaneously.</p>
-        <p><strong>Waiter Solution:</strong> A third party (waiter) controls access to chopsticks, preventing deadlock by acting as a mutex.</p>
+        <div class="control-panel">
+            <div class="control-group">
+                <button id="startBtn" class="btn btn-primary">
+                    <span class="btn-icon">▶</span>
+                    <span class="btn-text">Start</span>
+                </button>
+                <button id="pauseBtn" class="btn btn-warning" disabled>
+                    <span class="btn-icon">⏸</span>
+                    <span class="btn-text">Pause</span>
+                </button>
+                <button id="resetBtn" class="btn btn-danger">
+                    <span class="btn-icon">↺</span>
+                    <span class="btn-text">Reset</span>
+                </button>
+            </div>
+            
+            <div class="slider-group">
+                <div class="slider-control">
+                    <label>Philosophers</label>
+                    <input type="range" id="philSlider" min="3" max="8" value="5" class="slider">
+                    <span class="slider-value" id="philCount">5</span>
+                </div>
+                <div class="slider-control">
+                    <label>Speed</label>
+                    <input type="range" id="speedSlider" min="0.5" max="3" step="0.1" value="1" class="slider">
+                    <span class="slider-value" id="speedValue">1x</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="simulation-stage">
+            <div class="stage-container">
+                <div id="deadlock-warning" class="deadlock-warning hidden">
+                    <div class="warning-pulse"></div>
+                    <span>DEADLOCK DETECTED</span>
+                </div>
+                
+                <div id="waiter-container" class="waiter-container hidden">
+                    <div class="waiter-figure">
+                        <div class="waiter-emoji">🤵</div>
+                        <div class="waiter-label">ARBITER</div>
+                    </div>
+                    <div class="permission-queue" id="permission-queue"></div>
+                </div>
+                
+                <div id="table-container" class="table-container">
+                    <div id="table" class="table"></div>
+                </div>
+                
+                <canvas id="connection-canvas" class="connection-canvas"></canvas>
+            </div>
+            
+            <div class="metrics-panel">
+                <h3 class="metrics-title">Performance Metrics</h3>
+                <div class="metric-grid">
+                    <div class="metric">
+                        <div class="metric-label">Deadlocks</div>
+                        <div class="metric-value" id="deadlock-count">0</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Meals Served</div>
+                        <div class="metric-value" id="meals-count">0</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Avg Wait</div>
+                        <div class="metric-value" id="avg-wait">0ms</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Efficiency</div>
+                        <div class="metric-value" id="efficiency">0%</div>
+                    </div>
+                </div>
+                <div class="metric-chart">
+                    <canvas id="timeline-chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <div class="info-card">
+                <h4>The Problem</h4>
+                <p>N philosophers sit at a round table with N chopsticks. To eat, each needs both adjacent chopsticks. 
+                   This creates a resource allocation challenge central to concurrent programming.</p>
+            </div>
+            <div class="info-card">
+                <h4>The Pantheon Insight</h4>
+                <p>"Introduce a third party. Someone from the outside. A waiter." - Caspian's solution elegantly 
+                   prevents deadlock by adding an external arbiter that controls resource access.</p>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
